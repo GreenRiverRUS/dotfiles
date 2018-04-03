@@ -132,8 +132,10 @@ alias uwin='sudo umount /dev/sdb4'
 alias draft='vim /home/vadim/Documents/Draft.txt'
 
 alias hs='vblank_mode=0 primusrun wine .wine/drive_c/Program\ Files\ \(x86\)/Battle.net/Battle.net\ Launcher.exe 1>/dev/null 2>&1 &'
-alias runvpn_rub='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/rubbles/vmazaev.ovpn --daemon'
-alias killvpn='sudo /usr/bin/kill -9 $(/usr/bin/pidof openvpn)'
+alias dusk='vbalnk_mode=0 optirun /home/vadim/.local/share/Steam/steamapps/common/Duskers/Duskers_linux.x86_64 -force-opengl 1>/dev/null 2>&1 &'
+alias runvpn_rub_new='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/rubbles/vmazaev_new.ovpn --script-security 2 --up /etc/openvpn/update-resolv-conf.sh --down /etc/openvpn/update-resolv-conf.sh --down-pre --daemon'
+alias killvpn='sudo /usr/bin/kill -SIGINT $(/usr/bin/pidof openvpn)'
+alias runvpn='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/vscale/vmazaev.ovpn --script-security 2 --up /etc/openvpn/update-resolv-conf.sh --down /etc/openvpn/update-resolv-conf.sh --down-pre --daemon'
 
 
 # Functions
@@ -212,20 +214,47 @@ venv3() {
     fi
 }
 
-dinit_rubbles() {
-	export DOCKER_TLS_VERIFY="1"
-	export DOCKER_HOST="tcp://:2376"
-	export DOCKER_CERT_PATH="/home/vadim/.vpn/rubbles"
+ace() {
+	acestream-launcher -t torrent "$1"
 }
 
-dinit_denis() {
-        export DOCKER_TLS_VERIFY="1"
-        export DOCKER_HOST="tcp://:2376"
-        export DOCKER_CERT_PATH="/home/vadim/.vpn/denis"
+dinit_vscale() {
+	unset DOCKER_TLS_VERIFY
+	export DOCKER_HOST="tcp://172.17.0.3:2375"
+	unset DOCKER_CERT_PATH
+}
+
+dinit_rubbles_new() {
+	unset DOCKER_TLS_VERIFY
+	unset DOCKER_CERT_PATH
+	export DOCKER_HOST="tcp://192.168.177.64:2375"
 }
 
 dinit_local() {
 	unset DOCKER_HOST
 	unset DOCKER_TLS_VERIFY
 }
+
+echo "
+                  o
+                  |
+                ,'~'.
+               /     \ 
+              |   ____|_
+              |  '___,,_'         .----------------.
+              |  ||(o |o)|       ( KILL ALL HUMANS! )
+              |   -------         ,----------------'
+              |  _____|         -'
+              \  '####,
+               -------
+             /________\ 
+           (  )        |)
+           '_ ' ,------|\         _
+          /_ /  |      |_\        ||
+         /_ /|  |     o| _\      _|| 
+        /_ / |  |      |\ _\____//' |
+       (  (  |  |      | (_,_,_,____/
+        \ _\ |   ------|        
+         \ _\|_________|
+"
 
