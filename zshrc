@@ -42,27 +42,27 @@ setopt prompt_subst
 
 
 # Bind keys
-bindkey "^[[0~" beginning-of-line
-bindkey "^[OH" beginning-of-line
-bindkey "^[[H" beginning-of-line
-bindkey "^[[1~" beginning-of-line
-bindkey "^[[4~" end-of-line
-bindkey "^[[F" end-of-line
-bindkey "^[OF" end-of-line
-bindkey "^[[4~" end-of-line
-bindkey "^[[3~" delete-char
-bindkey "^[[3~" delete-char
-bindkey "^[[3~" delete-char
-bindkey "^[[3~" delete-char
-bindkey "^[[1;5C" forward-word
-bindkey "^[OC" forward-word
-bindkey "^[[1;5D" backward-word
-bindkey "^[OD" backward-word
+#bindkey "^[[0~" beginning-of-line
+#bindkey "^[OH" beginning-of-line
+#bindkey "^[[H" beginning-of-line
+#bindkey "^[[1~" beginning-of-line
+#bindkey "^[[4~" end-of-line
+#bindkey "^[[F" end-of-line
+#bindkey "^[OF" end-of-line
+#bindkey "^[[4~" end-of-line
+#bindkey "^[[3~" delete-char
+#bindkey "^[[3~" delete-char
+#bindkey "^[[3~" delete-char
+#bindkey "^[[3~" delete-char
+#bindkey "^[[1;5C" forward-word
+#bindkey "^[OC" forward-word
+#bindkey "^[[1;5D" backward-word
+#bindkey "^[OD" backward-word
 bindkey '^R' history-incremental-search-backward
 
 
 # Moar color
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 typeset -A ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES=(
         'alias'           'fg=green'
@@ -117,7 +117,7 @@ setopt hist_ignore_space hist_reduce_blanks
 # Aliases
 alias ls='ls --color=auto --group-directories-first'
 alias grep='grep --color=auto'
-alias reload='source /home/vadim/.zshrc'
+alias reload='source /home/vmazaev/.zshrc'
 alias hibernate='echo disk | sudo tee /sys/power/state'
 alias -s {avi,mpeg,mpg,mov,m2v,mkv,mp4}=vlc
 alias -s {jpg,JPG,jpeg,JPEG,png,PNG}=eog
@@ -125,17 +125,20 @@ alias -s {odt,doc,docx,xls,xlsx,sxw,rtf}=libreoffice
 alias -s pdf=evince
 autoload -U pick-web-browser
 alias -s {html,htm}=opera
-alias -s {py,pyw}=python
+alias -s {py,pyw}=python3
 
-alias win='sudo mount -t ntfs-3g /dev/sdb4 /mnt/win; cd /mnt/win/Users/Vadim/Documents'
-alias uwin='sudo umount /dev/sdb4'
-alias draft='vim /home/vadim/Documents/Draft.txt'
+#alias hs='vblank_mode=0 primusrun wine .wine/drive_c/Program\ Files\ \(x86\)/Battle.net/Battle.net\ Launcher.exe 1>/dev/null 2>&1 &'
+#alias win='sudo mount -t ntfs-3g /dev/sdb4 /mnt/win; cd /mnt/win/Users/Vadim/Documents'
+#alias uwin='sudo umount /dev/sdb4'
 
-alias hs='vblank_mode=0 primusrun wine .wine/drive_c/Program\ Files\ \(x86\)/Battle.net/Battle.net\ Launcher.exe 1>/dev/null 2>&1 &'
-alias dusk='vbalnk_mode=0 optirun /home/vadim/.local/share/Steam/steamapps/common/Duskers/Duskers_linux.x86_64 -force-opengl 1>/dev/null 2>&1 &'
-alias runvpn_rub_new='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/rubbles/vmazaev_new.ovpn --script-security 2 --up /etc/openvpn/update-resolv-conf.sh --down /etc/openvpn/update-resolv-conf.sh --down-pre --daemon'
-alias killvpn='sudo /usr/bin/kill -SIGINT $(/usr/bin/pidof openvpn)'
-alias runvpn='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/vscale/vmazaev.ovpn --script-security 2 --up /etc/openvpn/update-resolv-conf.sh --down /etc/openvpn/update-resolv-conf.sh --down-pre --daemon'
+alias killvpn='sudo /bin/kill -SIGINT $(/bin/pidof openvpn)'
+alias runvpn='sudo /usr/local/sbin/openvpn --config /etc/openvpn/openvpn.conf'
+alias runvpn_docean='sudo /usr/local/sbin/openvpn --log /var/log/openvpn.log --config /home/vmazaev/.vpn/vmazaev_thinkpad.ovpn --daemon'
+alias prbvpn='if [[ $(/bin/pidof openvpn) ]]; then echo "VPN is running"; else echo "VPN is not running"; fi'
+# alias runvpn='sudo /usr/bin/openvpn --log /var/log/openvpn/log --config /home/vadim/.vpn/vscale/vmazaev.ovpn --script-security 2 --up /etc/openvpn/update-resolv-conf.sh --down /etc/openvpn/update-resolv-conf.sh --down-pre --daemon'
+
+#alias mount_dev='sshfs root@hostname:/home/vmazaev/ /home/vmazaev/Ya/shared -C -p 22 -o uid=43681 -o gid=98640'
+#alias umount_dev='fusermount -u /home/vmazaev/Ya/shared'
 
 
 # Functions
@@ -166,8 +169,8 @@ pk() {
  case $1 in
  tbz)       tar cjvf $2.tar.bz2 $2      ;;
  tgz)       tar czvf $2.tar.gz  $2       ;;
- tar)      tar cpvf $2.tar  $2       ;;
- bz2)    bzip $2 ;;
+ tar)       tar cpvf $2.tar  $2       ;;
+ bz2)       bzip $2 ;;
  gz)        gzip -c -9 -n $2 > $2.gz ;;
  zip)       zip -r $2.zip $2   ;;
  7z)        7z a $2.7z $2    ;;
@@ -218,21 +221,16 @@ ace() {
 	acestream-launcher -t torrent "$1"
 }
 
-dinit_vscale() {
+dinit_docean() {
 	unset DOCKER_TLS_VERIFY
-	export DOCKER_HOST="tcp://172.17.0.3:2375"
+	export DOCKER_HOST="tcp://172.17.0.2:2375"
 	unset DOCKER_CERT_PATH
-}
-
-dinit_rubbles_new() {
-	unset DOCKER_TLS_VERIFY
-	unset DOCKER_CERT_PATH
-	export DOCKER_HOST="tcp://192.168.177.64:2375"
 }
 
 dinit_local() {
 	unset DOCKER_HOST
 	unset DOCKER_TLS_VERIFY
+	unset DOCKER_CERT_PATH
 }
 
 echo "
