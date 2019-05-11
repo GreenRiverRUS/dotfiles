@@ -93,6 +93,10 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 # Set vim as default editor
 export EDITOR=vim
 
+export PYENV_ROOT="$HOME/.pyenv"
+
+path+=$PYENV_ROOT/bin
+export PATH
 
 # Add access to X-server for root (if available)
 [ ! "$UID" = "0" ] && command -v xhost && xhost +si:localuser:root > /dev/null
@@ -110,6 +114,7 @@ setopt hist_ignore_space hist_reduce_blanks
 
 
 # Aliases
+alias xclip='xclip -selection clipboard'
 alias ls='ls --color=auto --group-directories-first'
 alias grep='grep --color=auto'
 alias reload='source ~/.zshrc'
