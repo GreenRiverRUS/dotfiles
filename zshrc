@@ -33,7 +33,7 @@ setopt prompt_subst
 # Main prompt
 [ ! "$UID" = "0" ] && PROMPT='%B%F{green}%n@%f%F{red}%m%f%b:${vcs_info_msg_0_}$ '
 # Root prompt
-[  "$UID" = "0" ] && PROMPT='%B%F{red}%n@%m%f%b:%B%F{blue}%2~%f%b${vcs_info_msg_0_}# '
+[  "$UID" = "0" ] && PROMPT='%B%F{red}%n@%m%f%b:${vcs_info_msg_0_}# '
 
 
 # Bind keys
