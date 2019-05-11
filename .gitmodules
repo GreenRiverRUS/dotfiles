@@ -1,0 +1,3 @@
+[submodule "vim_darcula_theme"]
+	path = vim_darcula_theme
+	url = https://github.com/blueshirts/darcula
