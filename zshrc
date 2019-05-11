@@ -1,44 +1,39 @@
 # Prompt init
-autoload -U promptinit
-promptinit
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git svn
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '%B!%b'
+zstyle ':vcs_info:*' stagedstr '%B+%b'
+zstyle ':vcs_info:*' nvcsformats '%F{blue}%B%2~%b%f'  # show only last 2 parts of path outside vcs
+zstyle ':vcs_info:*' formats '%B%F{blue}%r%f%%b(%B%F{yellow}%b%f%%b%c%u)%B%F{blue}%S%f%%b'
+zstyle ':vcs_info:*' actionformats '%B%F{blue}%r%f%%b[%B%F{red}%a%f%%b]%B%F{blue}%S%f%%b'
 
-mkdir -p /tmp/zsh-temp
-git_prompt_file=/tmp/zsh-temp/$RANDOM$RANDOM$RANDOM
-echo -n "" > $git_prompt_file
-
-
-# Store current git branch (if available)
-function git_branch_store() {
-    if git branch >/dev/null 2>/dev/null; then
-        ref=$(git symbolic-ref HEAD | cut -d'/' -f3)
-        echo -n "(%F{red}git%f on %F{green}$ref%f)" > $git_prompt_file
+# Fix subdir path (%S) inside vcs to show only last 2 parts of path
+# e.g. repo/dir/subdir/file -> subdir/file
+zstyle ':vcs_info:*+set-message:*' hooks subdir-path
+function +vi-subdir-path() {
+    #autoload -U regexp-replace
+    #hook_com[base]="${hook_com[base]/$HOME/~}"
+    basename="$(basename ${hook_com[subdir]})"
+    if [ "$basename" = "." ]; then
+        hook_com[subdir]=""
+        return
+    fi
+    basedir="$(basename $(dirname ${hook_com[subdir]}))"
+    if [ "$basedir" = "." ]; then
+        hook_com[subdir]="$basename"
     else
-        echo -n "" > $git_prompt_file
+        hook_com[subdir]="$basedir/$basename"
     fi
 }
 
-function launch() {
-    git_branch_store
-}
-
-function launch_back() {
-    launch $!
-}
-
-PERIOD=2
-function periodic() {
-    launch_back
-}
+precmd() { vcs_info }
 
 setopt prompt_subst
-
-
 # Main prompt
-[ ! "$UID" = "0" ] && PROMPT='$(cat $git_prompt_file)%B%F{blue}%2~/%f%F{blue}%f%b$ '
+[ ! "$UID" = "0" ] && PROMPT='%B%F{green}%n@%f%F{red}%m%f%b:${vcs_info_msg_0_}$ '
 # Root prompt
-[  "$UID" = "0" ] && PROMPT='$(cat $git_prompt_file)%B%F{red}%2~/%f%F{blue}%f%b$ '
-# Right prompt
-#RPROMPT="%{$fg_bold[grey]%}(%*)%{$reset_color%}%"
+[  "$UID" = "0" ] && PROMPT='%B%F{red}%n@%m%f%b:%B%F{blue}%2~%f%b${vcs_info_msg_0_}# '
 
 
 # Bind keys
@@ -65,14 +60,14 @@ bindkey '^R' history-incremental-search-backward
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 typeset -A ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES=(
-        'alias'           'fg=green'
-        'builtin'         'fg=cyan'
-        'function'        'fg=cyan'
-        'command'         'fg=153,bold'
-        'precommand'      'fg=magenta, underline'
-        'hashed-commands' 'fg=cyan'
-        'path'            'underline'
-        'globbing'        'fg=166'
+    'alias'           'fg=green'
+    'builtin'         'fg=cyan'
+    'function'        'fg=cyan'
+    'command'         'fg=153,bold'
+    'precommand'      'fg=magenta, underline'
+    'hashed-commands' 'fg=cyan'
+    'path'            'underline'
+    'globbing'        'fg=166'
 )
 
 
@@ -99,8 +94,8 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 export EDITOR=vim
 
 
-# Add access to X-server for root
-[ ! "$UID" = "0" ] && xhost +si:localuser:root > /dev/null
+# Add access to X-server for root (if available)
+[ ! "$UID" = "0" ] && command -v xhost && xhost +si:localuser:root > /dev/null
 
 # Activate the bash-style comments in interactive mode
 setopt interactivecomments
@@ -117,14 +112,14 @@ setopt hist_ignore_space hist_reduce_blanks
 # Aliases
 alias ls='ls --color=auto --group-directories-first'
 alias grep='grep --color=auto'
-alias reload='source /home/vmazaev/.zshrc'
+alias reload='source ~/.zshrc'
 alias hibernate='echo disk | sudo tee /sys/power/state'
 alias -s {avi,mpeg,mpg,mov,m2v,mkv,mp4}=vlc
 alias -s {jpg,JPG,jpeg,JPEG,png,PNG}=eog
 alias -s {odt,doc,docx,xls,xlsx,sxw,rtf}=libreoffice
 alias -s pdf=evince
 autoload -U pick-web-browser
-alias -s {html,htm}=opera
+alias -s {html,htm}=vivaldi
 alias -s {py,pyw}=python3
 
 #alias hs='vblank_mode=0 primusrun wine .wine/drive_c/Program\ Files\ \(x86\)/Battle.net/Battle.net\ Launcher.exe 1>/dev/null 2>&1 &'
@@ -143,42 +138,42 @@ alias prbvpn='if [[ $(/bin/pidof openvpn) ]]; then echo "VPN is running"; else e
 
 # Functions
 extract() {
- if [ -f $1 ] ; then
- case $1 in
- *.tar.bz2)   tar xjf $1        ;;
- *.tar.gz)    tar xzf $1     ;;
- *.bz2)       bunzip2 $1       ;;
- *.rar)       unrar x $1     ;;
- *.gz)        gunzip $1     ;;
- *.tar)       tar xf $1        ;;
- *.tbz2)      tar xjf $1      ;;
- *.tbz)       tar -xjvf $1    ;;
- *.tgz)       tar xzf $1       ;;
- *.zip)       unzip $1     ;;
- *.Z)         uncompress $1  ;;
- *.7z)        7z x $1    ;;
- *)           echo "I don't know how to extract '$1'..." ;;
- esac
- else
- echo "'$1' is not a valid file"
- fi
+    if [ -f $1 ] ; then
+    case $1 in
+    *.tar.bz2)   tar xjf $1        ;;
+    *.tar.gz)    tar xzf $1     ;;
+    *.bz2)       bunzip2 $1       ;;
+    *.rar)       unrar x $1     ;;
+    *.gz)        gunzip $1     ;;
+    *.tar)       tar xf $1        ;;
+    *.tbz2)      tar xjf $1      ;;
+    *.tbz)       tar -xjvf $1    ;;
+    *.tgz)       tar xzf $1       ;;
+    *.zip)       unzip $1     ;;
+    *.Z)         uncompress $1  ;;
+    *.7z)        7z x $1    ;;
+    *)           echo "I don't know how to extract '$1'..." ;;
+    esac
+    else
+    echo "'$1' is not a valid file"
+    fi
 }
 
 pk() {
- if [ $1 ] ; then
- case $1 in
- tbz)       tar cjvf $2.tar.bz2 $2      ;;
- tgz)       tar czvf $2.tar.gz  $2       ;;
- tar)       tar cpvf $2.tar  $2       ;;
- bz2)       bzip $2 ;;
- gz)        gzip -c -9 -n $2 > $2.gz ;;
- zip)       zip -r $2.zip $2   ;;
- 7z)        7z a $2.7z $2    ;;
- *)         echo "'$1' cannot be packed via pk()" ;;
- esac
- else
- echo "'$1' is not a valid file"
- fi
+    if [ $1 ] ; then
+        case $1 in
+            tbz)       tar cjvf $2.tar.bz2 $2      ;;
+            tgz)       tar czvf $2.tar.gz  $2       ;;
+            tar)       tar cpvf $2.tar  $2       ;;
+            bz2)       bzip $2 ;;
+            gz)        gzip -c -9 -n $2 > $2.gz ;;
+            zip)       zip -r $2.zip $2   ;;
+            7z)        7z a $2.7z $2    ;;
+            *)         echo "'$1' cannot be packed via pk()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
 }
 
 venv() {
@@ -217,9 +212,9 @@ venv3() {
     fi
 }
 
-ace() {
-    acestream-launcher -t torrent "$1"
-}
+#ace() {
+#    acestream-launcher -t torrent "$1"
+#}
 
 dinit_docean() {
     unset DOCKER_TLS_VERIFY
@@ -255,4 +250,3 @@ echo "
         \ _\ |   ------|
          \ _\|_________|
 "
-
