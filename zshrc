@@ -99,7 +99,7 @@ zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
 export EDITOR=vim
 
 
-# Add access to X-server for root 
+# Add access to X-server for root
 [ ! "$UID" = "0" ] && xhost +si:localuser:root > /dev/null
 
 # Activate the bash-style comments in interactive mode
@@ -218,19 +218,19 @@ venv3() {
 }
 
 ace() {
-	acestream-launcher -t torrent "$1"
+    acestream-launcher -t torrent "$1"
 }
 
 dinit_docean() {
-	unset DOCKER_TLS_VERIFY
-	export DOCKER_HOST="tcp://172.17.0.2:2375"
-	unset DOCKER_CERT_PATH
+    unset DOCKER_TLS_VERIFY
+    export DOCKER_HOST="tcp://172.17.0.2:2375"
+    unset DOCKER_CERT_PATH
 }
 
 dinit_local() {
-	unset DOCKER_HOST
-	unset DOCKER_TLS_VERIFY
-	unset DOCKER_CERT_PATH
+    unset DOCKER_HOST
+    unset DOCKER_TLS_VERIFY
+    unset DOCKER_CERT_PATH
 }
 
 echo "
@@ -247,12 +247,12 @@ echo "
                -------
              /________\ 
            (  )        |)
-           '_ ' ,------|\         _
+           '_ ' ,------|\          _
           /_ /  |      |_\        ||
-         /_ /|  |     o| _\      _|| 
+         /_ /|  |     o| _\      _||
         /_ / |  |      |\ _\____//' |
        (  (  |  |      | (_,_,_,____/
-        \ _\ |   ------|        
+        \ _\ |   ------|
          \ _\|_________|
 "
 
