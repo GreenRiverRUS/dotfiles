@@ -1,3 +1,3 @@
 # Installation
 
-    curl -L https://raw.githubusercontent.com/GreenRiverRUS/dotfiles/master/install.sh | bash
+    bash <(curl -L https://raw.githubusercontent.com/GreenRiverRUS/dotfiles/master/install.sh)
