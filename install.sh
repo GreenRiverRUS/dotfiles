@@ -13,7 +13,7 @@ prompt() {
 }
 
 sudo apt-get install git
-git clone --recurse-submodules https://github.com/GreenRiverRUS/dotfiles.git ~/dotfiles
+git clone --recurse-submodules git@github.com:GreenRiverRUS/dotfiles.git ~/dotfiles
 ln -s ~/dotfiles/gitconfig ~/.gitconfig
 
 if prompt "Setup vim?"; then
